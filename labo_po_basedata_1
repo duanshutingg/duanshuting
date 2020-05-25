@@ -1,0 +1,69 @@
+-- Creating DataBase: Упражнение 1
+CREATE TABLE Books(
+    id INT PRIMARY KEY,
+    author TEXT,
+    title TEXT,
+  	publish_year INT
+);
+
+CREATE TABLE Readers(
+    id INT PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE Records(
+    reader_id INT,
+  	book_id INT, 
+  	taking_date INT,
+  	returning_date INT,
+  	FOREIGN KEY (book_id) REFERENCES Books (id),
+  	FOREIGN KEY (reader_id) REFERENCES Readers (id)
+);
+
+INSERT INTO Books
+VALUES
+    (1, 'Author_1', 'Title_1', 1980),
+    (2, 'Author_1', 'Title_2', 1980),
+    (3, 'Author_2', 'Title_2', 2000),
+    (4, 'Author_3', 'Title_3', NULL),
+    (5, 'Author_4', 'Title_4', 2002),
+    (6, 'Author_4', 'Title_5', 2003),
+    (7, 'Sun Tzu', 'The Art of War', -500);
+
+INSERT INTO Readers
+VALUES
+	(1 , 'Reader_1'),
+	(2 , 'Reader_1'),
+	(3 , 'Reader_2'),
+	(4 , 'Reader_3'),
+	(5 , 'Reader_4'),
+	(6 , 'Reader_5'),
+	(7 , 'Reader_6'),
+	(8 , 'Reader_7'),
+	(9 , Null),
+	(10, 'Reader_8'),
+	(11, 'Reader_9'),
+	(12, Null);
+
+INSERT INTO Records
+VALUES
+	(1,1,1584682881,1584782881),
+	(1,2,1584782882,1584792881),
+	(2,2,1584792881,NULL),
+	(3,3,1584892881,1584894881),
+	(4,5,1584592881,1584592889),
+	(6,7,1584492881,NULL),
+	(9,4,1584392881,1584393881),
+	(11,5,1583792881,NULL);
+  
+-- Упражнение 2.1 Запрос возвращает id и названия книг, находящихся в данный момент на руках у читателей.
+SELECT book_id FROM Records WHERE returning_date IS NULL
+-- Упражнение 2.2 Запрос возвращает имена читателей и названия книг, которые они когда либо брали.
+SELECT r.name, b.title FROM Books b, Readers r, Records rec WHERE b.id == rec.book_id AND r.id == rec.reader_id 
+--Упражнение 2.3 Запрос возвращает количество книг для каждого автора.
+SELECT b.author, COUNT(b.id) FROM Books b GROUP BY b.author
+
+-- Упражнение 3 Реализуйте запрос FULL OUTER JOIN и проверьте его на данных из примеров. (Аналогично SELECT r.name, rec.taking_date FROM Readers r FULL OUTER JOIN Records rec ON r.id == rec.reader_id)
+SELECT r.name, rec.taking_date FROM Readers r LEFT JOIN Records rec ON r.id == rec.reader_id
+UNION
+SELECT r.name, rec.taking_date FROM Records rec LEFT JOIN Readers r ON r.id == rec.reader_id
